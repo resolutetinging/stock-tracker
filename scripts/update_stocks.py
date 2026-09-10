@@ -111,6 +111,13 @@ def build_today_records(day_all, bwibbu_all, tickers):
             change_pct = round(change / prev_close * 100, 2)
 
         bwibbu_row = bwibbu_by_code.get(ticker, {})
+        # BWIBBU_ALL跟STOCK_DAY_ALL是兩支獨立API，理論上都是當日盤後資料，
+        # 但若TWSE兩邊更新時間不同步，日期可能對不上——此時本益比/殖利率/淨值比
+        # 視為當日不可信，寧可留空(None)也不要標成同一天卻其實是舊資料
+        bwibbu_date = roc_date_to_iso(bwibbu_row["Date"]) if bwibbu_row.get("Date") else None
+        if bwibbu_date is not None and bwibbu_date != trade_date:
+            bwibbu_row = {}
+
         records[ticker] = {
             "date": trade_date,
             "close": close,
@@ -131,13 +138,6 @@ def upsert_history(history, ticker, record):
     series.sort(key=lambda r: r["date"])
     if len(series) > MAX_HISTORY_LEN:
         del series[: len(series) - MAX_HISTORY_LEN]
-
-
-def resolve_threshold(stock, key):
-    override = stock.get("alert_thresholds", {}).get(key)
-    if override is not None:
-        return override
-    return None  # 由呼叫端自行fallback到global_defaults
 
 
 def check_alerts(stock, defaults, series):
@@ -216,11 +216,10 @@ def filter_new_alerts(alerts, alerts_log, today_str):
                     days_since = (datetime.fromisoformat(today_str) - datetime.fromisoformat(last_sent)).days
                 except ValueError:
                     days_since = None
-            made_new_extreme = (
-                prev.get("last_value") is not None
-                and alert.get("value") is not None
-                and alert["rule_type"] in ("52w_high",) and alert["value"] > prev["last_value"]
-                or alert["rule_type"] in ("52w_low",) and alert["value"] < prev["last_value"]
+            has_comparable_values = prev.get("last_value") is not None and alert.get("value") is not None
+            made_new_extreme = has_comparable_values and (
+                (alert["rule_type"] == "52w_high" and alert["value"] > prev["last_value"])
+                or (alert["rule_type"] == "52w_low" and alert["value"] < prev["last_value"])
             )
             should_send = days_since is None or days_since >= COOLDOWN_DAYS or made_new_extreme
 
