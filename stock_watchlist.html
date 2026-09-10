@@ -123,10 +123,27 @@ function renderCard(stock,series,recentAlerts){
   </div>`;
 }
 
+const RECENT_ALERT_DAYS=7;
+
+function recentAlertsForTicker(alertsLog,ticker){
+  const cutoff=Date.now()-RECENT_ALERT_DAYS*24*60*60*1000;
+  const out=[];
+  Object.entries(alertsLog||{}).forEach(([key,entry])=>{
+    const [logTicker,ruleType]=key.split(':');
+    if(logTicker!==ticker) return;
+    const sentTime=Date.parse(entry.last_sent_date);
+    if(!isNaN(sentTime)&&sentTime>=cutoff){
+      out.push({rule_type:ruleType,last_sent_date:entry.last_sent_date});
+    }
+  });
+  return out;
+}
+
 async function main(){
-  const [watchlist,history]=await Promise.all([
+  const [watchlist,history,alertsLog]=await Promise.all([
     fetch('./data/watchlist.json?v='+Date.now()).then(r=>r.json()),
     fetch('./data/stock_history.json?v='+Date.now()).then(r=>r.json()),
+    fetch('./data/alerts_log.json?v='+Date.now()).then(r=>r.json()).catch(()=>({})),
   ]);
 
   const stocks=(watchlist.stocks||[]).filter(s=>s.active!==false);
@@ -140,7 +157,8 @@ async function main(){
 
   grid.innerHTML=stocks.map(stock=>{
     const series=history[stock.ticker]||[];
-    return renderCard(stock,series,[]);
+    const recentAlerts=recentAlertsForTicker(alertsLog,stock.ticker);
+    return renderCard(stock,series,recentAlerts);
   }).join('');
 }
 
