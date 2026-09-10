@@ -10,9 +10,90 @@
     {
       "ticker": "2330",
       "name": "台積電",
+      "sector": "半導體／AI",
+      "note": "全球最大晶圓代工廠，AI晶片與半導體供應鏈核心",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2454",
+      "name": "聯發科",
       "sector": "半導體",
-      "note": "範例標的，換成你真正想觀察的股票即可",
-      "added_date": "2026-09-11",
+      "note": "手機/晶片IC設計大廠",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2303",
+      "name": "聯電",
+      "sector": "半導體",
+      "note": "晶圓代工，規模僅次於台積電",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2317",
+      "name": "鴻海",
+      "sector": "AI供應鏈",
+      "note": "AI伺服器組裝龍頭之一，也做手機/電子代工",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2382",
+      "name": "廣達",
+      "sector": "AI供應鏈",
+      "note": "AI伺服器ODM大廠，跟NVIDIA供應鏈關係密切",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "3017",
+      "name": "奇鋐",
+      "sector": "AI供應鏈",
+      "note": "AI伺服器散熱模組供應商",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "3661",
+      "name": "世芯-KY",
+      "sector": "AI供應鏈",
+      "note": "協助客戶設計AI晶片的ASIC設計服務商",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2408",
+      "name": "南亞科",
+      "sector": "記憶體",
+      "note": "DRAM記憶體製造大廠",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "8299",
+      "name": "群聯",
+      "sector": "記憶體",
+      "note": "NAND快閃記憶體控制晶片設計商",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "2344",
+      "name": "華邦電",
+      "sector": "記憶體",
+      "note": "利基型IC與記憶體晶片製造商",
+      "added_date": "2026-09-10",
       "active": true,
       "alert_thresholds": {}
     }
