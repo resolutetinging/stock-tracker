@@ -108,6 +108,27 @@ function changeClass(v){
   return v>0?'up':'down';
 }
 
+// 純數學計算：某指標的最新值，落在過去半年歷史分佈裡的百分位排名。
+// 不呼叫任何LLM/API，只是描述「現在跟自己過去比」，不做預測也不給買賣建議。
+function historicalPosition(series,field){
+  const vals=(series||[]).map(r=>r[field]).filter(v=>v!=null);
+  if(vals.length<10) return null; // 資料筆數太少，位置判斷沒有意義
+  const current=series[series.length-1]?.[field];
+  if(current==null) return null; // 該指標本身查無資料（例如ETF沒有本益比）
+  const countLe=vals.filter(v=>v<=current).length;
+  const percentile=Math.round(countLe/vals.length*100);
+  return {percentile,min:Math.min(...vals),max:Math.max(...vals),current};
+}
+function histPositionLabel(percentile){
+  if(percentile<=33) return '偏低';
+  if(percentile>=67) return '偏高';
+  return '中等';
+}
+function histPositionBlock(hist,unit){
+  if(!hist) return '';
+  return `<div class="metric-explain">過去半年區間：${hist.min}${unit} ~ ${hist.max}${unit}，目前排在第${hist.percentile}百分位（${histPositionLabel(hist.percentile)}）。這只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。</div>`;
+}
+
 const INTRADAY_STALE_MS=60*60*1000; // 超過1小時視為資料過舊/非交易時間，避免誤導使用者當成即時價
 const INTRADAY_LABEL='盤中參考（非官方即時資料，約每15分鐘更新，收盤後以官方數字為準）';
 
@@ -157,6 +178,9 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
     ? '查無資料'
     : '股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值';
 
+  const peHist=historicalPosition(series,'pe_ratio');
+  const yieldHist=historicalPosition(series,'dividend_yield');
+
   const badges=(recentAlerts||[]).map(a=>`<span class="alert-badge">${esc(RULE_LABELS[a.rule_type]||a.rule_type)}</span>`).join(' ');
 
   return `<div class="card">
@@ -169,8 +193,8 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
     ${priceBlock}
     ${intradayBlock(intradayRecord,intradayGeneratedAt)}
     <div class="metrics">
-      <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${pe??'—'}</div><div class="metric-explain">${peExplain}</div></div>
-      <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div></div>
+      <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${pe??'—'}</div><div class="metric-explain">${peExplain}</div>${histPositionBlock(peHist,'')}</div>
+      <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div>${histPositionBlock(yieldHist,'%')}</div>
       <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${pb??'—'}</div><div class="metric-explain">${pbExplain}</div></div>
     </div>
     <div class="spark-wrap">${sparklineSvg(series)}</div>
