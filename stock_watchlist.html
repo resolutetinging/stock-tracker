@@ -17,6 +17,13 @@
   .range-bar-label{font-size:11px;color:#9a9088;margin-right:2px;}
   .range-tab{font-size:12px;color:#8a6a3a;background:#f6ecd9;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
   .range-tab.active{color:#fff;background:#a05a00;}
+  .header-cards{max-width:960px;margin:0 auto;padding:0 20px 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
+  .header-cards .note{margin:0 0 10px;}
+  .header-cards .note:last-child{margin-bottom:0;}
+  .glossary-card summary{cursor:pointer;font-size:16px;font-weight:600;}
+  .glossary-card summary::-webkit-details-marker{color:#9a9088;}
+  .glossary-card .metric-explain{margin-top:10px;line-height:1.8;}
+  .glossary-card .metric-explain strong{color:#38342e;}
   .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
   .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:16px 18px;}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
@@ -52,6 +59,22 @@
   <div class="header">
     <h1>Stock Tracker</h1>
     <p>追蹤自己選的股票的公開數字變化，資料來源為台灣證券交易所（TWSE）官方公開資料。</p>
+  </div>
+  <div class="header-cards">
+    <div id="todayHighlights" class="card highlight-card"></div>
+    <div class="card glossary-card">
+      <details>
+        <summary>名詞定義小百科（點擊展開）</summary>
+        <div class="metric-explain">
+          <strong>本益比（P/E）</strong>：可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買。<br>
+          <strong>殖利率（Dividend Yield）</strong>：用目前股價買進，光靠配息一年大約能拿回股價的百分之多少。<br>
+          <strong>股價淨值比（P/B）</strong>：股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值。<br>
+          <strong>歷史相對位置／百分位</strong>：把目前的數字拿來跟這檔股票自己過去一段時間（依你選的時間範圍）比較，算出目前排在過去所有數字裡的第幾百分位，只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。<br>
+          <strong>盤中參考價</strong>：交易時間內約每15分鐘更新一次的非官方參考價格，收盤後仍以官方公布數字為準，超過1小時未更新就不顯示，避免誤以為是即時報價。<br>
+          <strong>ETF</strong>：一籃子股票打包成一張可以在市場上買賣的憑證，這份觀察名單裡有4檔ETF，通常沒有本益比、殖利率、股價淨值比這些個股才有的指標。
+        </div>
+      </details>
+    </div>
   </div>
   <div id="tabs" class="tabs"></div>
   <div class="range-bar"><span class="range-bar-label">趨勢圖時間範圍：</span><div id="rangeTabs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>
@@ -242,6 +265,69 @@ function recentAlertsForTicker(alertsLog,ticker){
   return out;
 }
 
+function fmtDateZh(dateStr){
+  if(!dateStr||dateStr.length<10) return '';
+  const m=parseInt(dateStr.slice(5,7),10);
+  const d=parseInt(dateStr.slice(8,10),10);
+  return m+'月'+d+'日';
+}
+
+// 卡片①-A：今日漲跌幅排行榜。用每檔股票series「最新一筆」的change_pct排序，
+// 永遠看全部股票的最新一天，不受sector/時間區間tab影響。標示的日期取自資料
+// 本身最新一筆的date，不是瀏覽器today()——排程還沒跑時兩者可能不同。
+function computeChangeRanking(cardData){
+  const rows=(cardData||[]).map(c=>{
+    const latest=c.series&&c.series.length?c.series[c.series.length-1]:null;
+    return latest?{name:c.stock.name,pct:latest.change_pct,date:latest.date}:null;
+  }).filter(r=>r&&r.pct!=null);
+  if(!rows.length) return null;
+  const latestDate=rows.reduce((max,r)=>(r.date&&r.date>max)?r.date:max,rows[0].date||'');
+  const sorted=[...rows].sort((a,b)=>b.pct-a.pct);
+  return {date:latestDate,gainers:sorted.slice(0,3),losers:sorted.slice(-3).reverse()};
+}
+
+// 卡片①-B：近5個交易日趨勢分類。比較series「最新一筆」收盤價 vs 「往前數
+// 第5筆」收盤價（5筆交易日資料，不是5個日曆天）。只分類已經發生的價格變化
+// 方向，不做任何預測；資料不足6筆（含最新這筆）直接跳過不分類。
+const TREND_THRESHOLD_PCT=3;
+function computeFiveDayTrend(cardData){
+  const up=[],down=[],flat=[];
+  (cardData||[]).forEach(c=>{
+    const s=c.series;
+    if(!s||s.length<6) return;
+    const latest=s[s.length-1].close;
+    const prior=s[s.length-6].close;
+    if(latest==null||prior==null||!prior) return;
+    const pct=(latest-prior)/prior*100;
+    if(pct>=TREND_THRESHOLD_PCT) up.push(c.stock.name);
+    else if(pct<=-TREND_THRESHOLD_PCT) down.push(c.stock.name);
+    else flat.push(c.stock.name);
+  });
+  return {up,down,flat};
+}
+
+function renderTodayHighlights(cardData){
+  const el=document.getElementById('todayHighlights');
+  if(!el) return;
+  const ranking=computeChangeRanking(cardData);
+  const trend=computeFiveDayTrend(cardData);
+
+  const rankingHtml=ranking
+    ? `<div class="note">${esc(fmtDateZh(ranking.date))}漲跌幅：<br>`
+      +`漲幅最大 ${ranking.gainers.map(r=>`${esc(r.name)}<span class="${changeClass(r.pct)}">${fmtPct(r.pct)}</span>`).join('、')}<br>`
+      +`跌幅最大 ${ranking.losers.map(r=>`${esc(r.name)}<span class="${changeClass(r.pct)}">${fmtPct(r.pct)}</span>`).join('、')}`
+      +`</div>`
+    : `<div class="note">目前無可排序的漲跌幅資料。</div>`;
+
+  const trendHtml=`<div class="note">近5個交易日價格變化方向（比較最新一筆與往前數第5筆收盤價，僅描述已發生的變化）：<br>`
+    +`上升(${trend.up.length}檔) ${trend.up.map(n=>esc(n)).join('、')||'—'}<br>`
+    +`下降(${trend.down.length}檔) ${trend.down.map(n=>esc(n)).join('、')||'—'}<br>`
+    +`持平(${trend.flat.length}檔) ${trend.flat.map(n=>esc(n)).join('、')||'—'}<br>`
+    +`這只是描述過去5個交易日的價格變化方向，不代表未來走勢。</div>`;
+
+  el.innerHTML=`<div class="name" style="margin-bottom:8px;">今日重點</div>${rankingHtml}${trendHtml}`;
+}
+
 let allCardData=[]; // 模組層級：main()載入一次後，切換sector tab只重新filter+render，不重新fetch
 let currentSector='全部';
 let currentRange='6M'; // 全局時間區間tab，跟currentSector各自獨立，互不影響；預設半年維持改動前既有畫面
@@ -318,6 +404,8 @@ async function main(){
     intradayRecord:intradayStocks[stock.ticker]||null,
     intradayGeneratedAt,
   }));
+
+  renderTodayHighlights(allCardData);
 
   const sectors=[...new Set(stocks.map(s=>s.sector).filter(Boolean))];
   renderTabs(sectors);
