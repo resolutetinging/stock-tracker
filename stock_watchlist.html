@@ -10,6 +10,9 @@
   .header{padding:32px 20px 16px;max-width:960px;margin:0 auto;}
   .header h1{font-size:22px;margin:0 0 6px;}
   .header p{font-size:13px;color:#9a9088;margin:0;line-height:1.6;}
+  .tabs{max-width:960px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px;}
+  .tab{font-size:12px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
+  .tab.active{color:#fff;background:#38342e;}
   .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
   .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:16px 18px;}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
@@ -43,9 +46,10 @@
 </head>
 <body>
   <div class="header">
-    <h1>股票觀察名單追蹤器</h1>
+    <h1>Stock Tracker</h1>
     <p>追蹤自己選的股票的公開數字變化，資料來源為台灣證券交易所（TWSE）官方公開資料。</p>
   </div>
+  <div id="tabs" class="tabs"></div>
   <div id="grid" class="grid"></div>
   <div id="empty" class="empty" style="display:none">目前watchlist沒有啟用中的股票，編輯 data/watchlist.json 加入你想觀察的標的。</div>
   <div class="footer">
@@ -61,20 +65,36 @@ function esc(s){
   return d.innerHTML;
 }
 
-function sparklineSvg(closes){
-  if(!closes||closes.length<2) return '';
-  const w=260,h=48,pad=4;
+function mmdd(dateStr){
+  return dateStr&&dateStr.length>=10?dateStr.slice(5,10):'';
+}
+
+function sparklineSvg(series){
+  const pts=(series||[]).filter(r=>r&&r.close!=null);
+  if(pts.length<2) return '';
+  const closes=pts.map(r=>r.close);
+  const w=260,h=78,padX=4,padTop=14,padBottom=16;
+  const plotH=h-padTop-padBottom;
   const min=Math.min(...closes),max=Math.max(...closes);
   const range=(max-min)||1;
-  const step=(w-pad*2)/(closes.length-1);
-  const pts=closes.map((v,i)=>{
-    const x=pad+i*step;
-    const y=h-pad-((v-min)/range)*(h-pad*2);
-    return x.toFixed(1)+','+y.toFixed(1);
-  }).join(' ');
+  const step=(w-padX*2)/(closes.length-1);
+  const coords=closes.map((v,i)=>{
+    const x=padX+i*step;
+    const y=padTop+plotH-((v-min)/range)*plotH;
+    return {x,y};
+  });
+  const linePts=coords.map(c=>c.x.toFixed(1)+','+c.y.toFixed(1)).join(' ');
   const trendColor=closes[closes.length-1]>=closes[0]?'#c0392b':'#1e8449';
+  const startDate=mmdd(pts[0].date),endDate=mmdd(pts[pts.length-1].date);
+  const axisColor='#9a9088';
+  // 文字標籤要畫在polyline之後（SVG依文件順序疊層），否則折線本身
+  // 常常剛好經過標籤位置（例如起始點就是最低價），會把數字蓋住看不到
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block">`
-    +`<polyline points="${pts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
+    +`<polyline points="${linePts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
+    +`<text x="${padX}" y="10" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="#fff" stroke-width="3">${max}</text>`
+    +`<text x="${padX}" y="${padTop+plotH-2}" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="#fff" stroke-width="3">${min}</text>`
+    +`<text x="${padX}" y="${padTop+plotH+13}" text-anchor="start" font-size="9" fill="${axisColor}">${startDate}</text>`
+    +`<text x="${w-padX}" y="${padTop+plotH+13}" text-anchor="end" font-size="9" fill="${axisColor}">${endDate}</text>`
     +`</svg>`;
 }
 
@@ -117,7 +137,6 @@ function intradayBlock(record,generatedAt){
 
 function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt){
   const today=series.length?series[series.length-1]:null;
-  const closes=series.map(r=>r.close).filter(v=>v!=null);
 
   const priceBlock=today
     ? `<div class="price-row"><span class="price">${today.close??'—'}</span>`
@@ -129,7 +148,7 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
   const pb=today?.pb_ratio;
 
   const peExplain=pe==null
-    ? '（虧損公司通常沒有本益比）'
+    ? '（虧損公司或ETF等類型通常沒有本益比）'
     : '可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買';
   const yieldExplain=yieldPct==null
     ? '查無資料'
@@ -154,7 +173,7 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
       <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div></div>
       <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${pb??'—'}</div><div class="metric-explain">${pbExplain}</div></div>
     </div>
-    <div class="spark-wrap">${sparklineSvg(closes)}</div>
+    <div class="spark-wrap">${sparklineSvg(series)}</div>
   </div>`;
 }
 
@@ -174,6 +193,33 @@ function recentAlertsForTicker(alertsLog,ticker){
   return out;
 }
 
+let allCardData=[]; // 模組層級：main()載入一次後，切換sector tab只重新filter+render，不重新fetch
+let currentSector='全部';
+
+function renderTabs(sectors){
+  const tabsEl=document.getElementById('tabs');
+  const options=['全部',...sectors];
+  tabsEl.innerHTML=options.map(sector=>{
+    const active=sector===currentSector?' active':'';
+    return `<button type="button" class="tab${active}" data-sector="${esc(sector)}">${esc(sector)}</button>`;
+  }).join('');
+  tabsEl.querySelectorAll('.tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      currentSector=btn.dataset.sector;
+      renderTabs(sectors);
+      renderGrid();
+    });
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById('grid');
+  const filtered=currentSector==='全部'
+    ? allCardData
+    : allCardData.filter(c=>c.stock.sector===currentSector);
+  grid.innerHTML=filtered.map(c=>renderCard(c.stock,c.series,c.recentAlerts,c.intradayRecord,c.intradayGeneratedAt)).join('');
+}
+
 async function main(){
   const [watchlist,history,alertsLog,intraday]=await Promise.all([
     fetch('./data/watchlist.json?v='+Date.now()).then(r=>r.json()),
@@ -186,7 +232,6 @@ async function main(){
   ]);
 
   const stocks=(watchlist.stocks||[]).filter(s=>s.active!==false);
-  const grid=document.getElementById('grid');
   const emptyEl=document.getElementById('empty');
 
   if(!stocks.length){
@@ -197,12 +242,17 @@ async function main(){
   const intradayStocks=(intraday&&typeof intraday==='object'&&intraday.stocks&&typeof intraday.stocks==='object')?intraday.stocks:{};
   const intradayGeneratedAt=(intraday&&typeof intraday==='object')?intraday.generated_at:null;
 
-  grid.innerHTML=stocks.map(stock=>{
-    const series=history[stock.ticker]||[];
-    const recentAlerts=recentAlertsForTicker(alertsLog,stock.ticker);
-    const intradayRecord=intradayStocks[stock.ticker]||null;
-    return renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt);
-  }).join('');
+  allCardData=stocks.map(stock=>({
+    stock,
+    series:history[stock.ticker]||[],
+    recentAlerts:recentAlertsForTicker(alertsLog,stock.ticker),
+    intradayRecord:intradayStocks[stock.ticker]||null,
+    intradayGeneratedAt,
+  }));
+
+  const sectors=[...new Set(stocks.map(s=>s.sector).filter(Boolean))];
+  renderTabs(sectors);
+  renderGrid();
 }
 
 main().catch(err=>{
