@@ -13,6 +13,10 @@
   .tabs{max-width:960px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px;}
   .tab{font-size:12px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
   .tab.active{color:#fff;background:#38342e;}
+  .range-bar{max-width:960px;margin:8px auto 0;padding:0 20px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+  .range-bar-label{font-size:11px;color:#9a9088;margin-right:2px;}
+  .range-tab{font-size:12px;color:#8a6a3a;background:#f6ecd9;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
+  .range-tab.active{color:#fff;background:#a05a00;}
   .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
   .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:16px 18px;}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
@@ -50,6 +54,7 @@
     <p>追蹤自己選的股票的公開數字變化，資料來源為台灣證券交易所（TWSE）官方公開資料。</p>
   </div>
   <div id="tabs" class="tabs"></div>
+  <div class="range-bar"><span class="range-bar-label">趨勢圖時間範圍：</span><div id="rangeTabs" style="display:flex;flex-wrap:wrap;gap:8px;"></div></div>
   <div id="grid" class="grid"></div>
   <div id="empty" class="empty" style="display:none">目前watchlist沒有啟用中的股票，編輯 data/watchlist.json 加入你想觀察的標的。</div>
   <div class="footer">
@@ -67,6 +72,22 @@ function esc(s){
 
 function mmdd(dateStr){
   return dateStr&&dateStr.length>=10?dateStr.slice(5,10):'';
+}
+
+// 時間區間tab對照表：key是tab代號，value是往回推算的月數
+const RANGE_MONTHS={'1M':1,'3M':3,'6M':6,'1Y':12};
+const RANGE_LABELS={'1M':'1個月','3M':'3個月','6M':'半年','1Y':'一年'};
+
+// 以series裡「最新一筆資料的日期」為錨點往回推months個月，而不是瀏覽器的
+// 真實今天——股市資料本身可能落後幾天（週末/非交易日），用資料自己的
+// 最新日期當基準才不會讓區間邊界跟著現實日曆亂跑。
+function filterSeriesByRange(series,months){
+  const pts=(series||[]).filter(r=>r&&r.date);
+  if(!pts.length) return [];
+  const anchor=new Date(pts[pts.length-1].date);
+  const cutoff=new Date(anchor);
+  cutoff.setMonth(cutoff.getMonth()-months);
+  return pts.filter(r=>new Date(r.date)>=cutoff);
 }
 
 function sparklineSvg(series){
@@ -126,7 +147,8 @@ function histPositionLabel(percentile){
 }
 function histPositionBlock(hist,unit){
   if(!hist) return '';
-  return `<div class="metric-explain">過去半年區間：${hist.min}${unit} ~ ${hist.max}${unit}，目前排在第${hist.percentile}百分位（${histPositionLabel(hist.percentile)}）。這只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。</div>`;
+  const rangeLabel=RANGE_LABELS[currentRange]||'半年';
+  return `<div class="metric-explain">過去${rangeLabel}區間：${hist.min}${unit} ~ ${hist.max}${unit}，目前排在第${hist.percentile}百分位（${histPositionLabel(hist.percentile)}）。這只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。</div>`;
 }
 
 const INTRADAY_STALE_MS=60*60*1000; // 超過1小時視為資料過舊/非交易時間，避免誤導使用者當成即時價
@@ -156,8 +178,11 @@ function intradayBlock(record,generatedAt){
   </div>`;
 }
 
-function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt){
-  const today=series.length?series[series.length-1]:null;
+// fullSeries：完整歷史，只用來取「目前股價/漲跌幅」，不受時間區間tab影響。
+// filteredSeries：依currentRange篩選過的子區間，趨勢圖與百分位分析都用這份，
+// 確保圖表範圍跟歷史位置分析的計算基準一致（同一個時間區間）。
+function renderCard(stock,fullSeries,filteredSeries,recentAlerts,intradayRecord,intradayGeneratedAt){
+  const today=fullSeries.length?fullSeries[fullSeries.length-1]:null;
 
   const priceBlock=today
     ? `<div class="price-row"><span class="price">${today.close??'—'}</span>`
@@ -178,8 +203,8 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
     ? '查無資料'
     : '股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值';
 
-  const peHist=historicalPosition(series,'pe_ratio');
-  const yieldHist=historicalPosition(series,'dividend_yield');
+  const peHist=historicalPosition(filteredSeries,'pe_ratio');
+  const yieldHist=historicalPosition(filteredSeries,'dividend_yield');
 
   const badges=(recentAlerts||[]).map(a=>`<span class="alert-badge">${esc(RULE_LABELS[a.rule_type]||a.rule_type)}</span>`).join(' ');
 
@@ -197,7 +222,7 @@ function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt
       <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div>${histPositionBlock(yieldHist,'%')}</div>
       <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${pb??'—'}</div><div class="metric-explain">${pbExplain}</div></div>
     </div>
-    <div class="spark-wrap">${sparklineSvg(series)}</div>
+    <div class="spark-wrap">${sparklineSvg(filteredSeries)}</div>
   </div>`;
 }
 
@@ -219,6 +244,23 @@ function recentAlertsForTicker(alertsLog,ticker){
 
 let allCardData=[]; // 模組層級：main()載入一次後，切換sector tab只重新filter+render，不重新fetch
 let currentSector='全部';
+let currentRange='6M'; // 全局時間區間tab，跟currentSector各自獨立，互不影響；預設半年維持改動前既有畫面
+
+function renderRangeTabs(){
+  const rangeEl=document.getElementById('rangeTabs');
+  const options=['1M','3M','6M','1Y'];
+  rangeEl.innerHTML=options.map(key=>{
+    const active=key===currentRange?' active':'';
+    return `<button type="button" class="range-tab${active}" data-range="${key}">${esc(RANGE_LABELS[key])}</button>`;
+  }).join('');
+  rangeEl.querySelectorAll('.range-tab').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      currentRange=btn.dataset.range;
+      renderRangeTabs();
+      renderGrid();
+    });
+  });
+}
 
 function renderTabs(sectors){
   const tabsEl=document.getElementById('tabs');
@@ -241,7 +283,10 @@ function renderGrid(){
   const filtered=currentSector==='全部'
     ? allCardData
     : allCardData.filter(c=>c.stock.sector===currentSector);
-  grid.innerHTML=filtered.map(c=>renderCard(c.stock,c.series,c.recentAlerts,c.intradayRecord,c.intradayGeneratedAt)).join('');
+  grid.innerHTML=filtered.map(c=>{
+    const filteredSeries=filterSeriesByRange(c.series,RANGE_MONTHS[currentRange]);
+    return renderCard(c.stock,c.series,filteredSeries,c.recentAlerts,c.intradayRecord,c.intradayGeneratedAt);
+  }).join('');
 }
 
 async function main(){
@@ -276,6 +321,7 @@ async function main(){
 
   const sectors=[...new Set(stocks.map(s=>s.sector).filter(Boolean))];
   renderTabs(sectors);
+  renderRangeTabs();
   renderGrid();
 }
 
