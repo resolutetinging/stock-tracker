@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票觀察名單追蹤器</title>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#faf8f4;color:#38342e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;}
+  .header{padding:32px 20px 16px;max-width:960px;margin:0 auto;}
+  .header h1{font-size:22px;margin:0 0 6px;}
+  .header p{font-size:13px;color:#9a9088;margin:0;line-height:1.6;}
+  .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+  .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:16px 18px;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+  .name{font-size:16px;font-weight:600;}
+  .ticker{font-size:12px;color:#9a9088;margin-left:4px;font-weight:400;}
+  .sector{font-size:11px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:3px 10px;white-space:nowrap;}
+  .note{font-size:12.5px;color:#7a7570;background:#f4f1ec;border-radius:8px;padding:8px 10px;margin:10px 0;line-height:1.6;}
+  .price-row{display:flex;align-items:baseline;gap:8px;margin:10px 0 2px;}
+  .price{font-size:26px;font-weight:700;}
+  .change{font-size:14px;font-weight:600;}
+  .up{color:#c0392b;}
+  .down{color:#1e8449;}
+  .flat{color:#9a9088;}
+  .metrics{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;}
+  .metric{flex:1;min-width:120px;background:#f4f1ec;border-radius:8px;padding:8px 10px;}
+  .metric-label{font-size:10.5px;color:#9a9088;}
+  .metric-value{font-size:14px;font-weight:600;margin:2px 0 3px;}
+  .metric-explain{font-size:10.5px;color:#9a9088;line-height:1.5;}
+  .spark-wrap{margin:12px 0 4px;}
+  .alert-badge{display:inline-block;font-size:11px;font-weight:600;color:#a05a00;background:#fbe8cc;border-radius:20px;padding:3px 10px;margin-bottom:8px;}
+  .empty{max-width:960px;margin:40px auto;padding:0 20px;color:#9a9088;font-size:13px;text-align:center;}
+  .footer{max-width:960px;margin:0 auto;padding:20px 20px 40px;color:#9a9088;font-size:11.5px;line-height:1.7;border-top:1px dashed #e5e0d8;}
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>股票觀察名單追蹤器</h1>
+    <p>追蹤自己選的股票的公開數字變化，資料來源為台灣證券交易所（TWSE）官方公開資料。</p>
+  </div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty" style="display:none">目前watchlist沒有啟用中的股票，編輯 data/watchlist.json 加入你想觀察的標的。</div>
+  <div class="footer">
+    這個工具只是幫你追蹤自己選的股票的公開數字變化，所有內容是資料整理與白話翻譯，不構成任何投資建議，買賣決定與風險請自行判斷。
+  </div>
+
+<script>
+const RULE_LABELS={daily_change_pct:'單日漲跌幅',pe_ratio_high:'本益比偏高',pe_ratio_low:'本益比偏低',yield_pct_low:'殖利率偏低','52w_high':'52週新高','52w_low':'52週新低'};
+
+function esc(s){
+  const d=document.createElement('div');
+  d.textContent=s==null?'':String(s);
+  return d.innerHTML;
+}
+
+function sparklineSvg(closes){
+  if(!closes||closes.length<2) return '';
+  const w=260,h=48,pad=4;
+  const min=Math.min(...closes),max=Math.max(...closes);
+  const range=(max-min)||1;
+  const step=(w-pad*2)/(closes.length-1);
+  const pts=closes.map((v,i)=>{
+    const x=pad+i*step;
+    const y=h-pad-((v-min)/range)*(h-pad*2);
+    return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  const trendColor=closes[closes.length-1]>=closes[0]?'#c0392b':'#1e8449';
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block">`
+    +`<polyline points="${pts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
+    +`</svg>`;
+}
+
+function fmtPct(v){
+  if(v==null) return '—';
+  const sign=v>0?'+':'';
+  return sign+v.toFixed(2)+'%';
+}
+function changeClass(v){
+  if(v==null||v===0) return 'flat';
+  return v>0?'up':'down';
+}
+
+function renderCard(stock,series,recentAlerts){
+  const today=series.length?series[series.length-1]:null;
+  const closes=series.map(r=>r.close).filter(v=>v!=null);
+
+  const priceBlock=today
+    ? `<div class="price-row"><span class="price">${today.close??'—'}</span>`
+      +`<span class="change ${changeClass(today.change_pct)}">${fmtPct(today.change_pct)}</span></div>`
+    : `<div class="price-row"><span class="price">尚無資料</span></div>`;
+
+  const pe=today?.pe_ratio;
+  const yieldPct=today?.dividend_yield;
+  const pb=today?.pb_ratio;
+
+  const peExplain=pe==null
+    ? '（虧損公司通常沒有本益比）'
+    : '可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買';
+  const yieldExplain=yieldPct==null
+    ? '查無資料'
+    : `用目前股價買進，光靠配息一年大約能拿回股價的${yieldPct}%`;
+  const pbExplain=pb==null
+    ? '查無資料'
+    : '股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值';
+
+  const badges=(recentAlerts||[]).map(a=>`<span class="alert-badge">${esc(RULE_LABELS[a.rule_type]||a.rule_type)}</span>`).join(' ');
+
+  return `<div class="card">
+    ${badges?`<div>${badges}</div>`:''}
+    <div class="card-top">
+      <div><span class="name">${esc(stock.name)}</span><span class="ticker">${esc(stock.ticker)}</span></div>
+      <span class="sector">${esc(stock.sector||'')}</span>
+    </div>
+    ${stock.note?`<div class="note">為什麼關注：${esc(stock.note)}</div>`:''}
+    ${priceBlock}
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${pe??'—'}</div><div class="metric-explain">${peExplain}</div></div>
+      <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div></div>
+      <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${pb??'—'}</div><div class="metric-explain">${pbExplain}</div></div>
+    </div>
+    <div class="spark-wrap">${sparklineSvg(closes)}</div>
+  </div>`;
+}
+
+async function main(){
+  const [watchlist,history]=await Promise.all([
+    fetch('./data/watchlist.json?v='+Date.now()).then(r=>r.json()),
+    fetch('./data/stock_history.json?v='+Date.now()).then(r=>r.json()),
+  ]);
+
+  const stocks=(watchlist.stocks||[]).filter(s=>s.active!==false);
+  const grid=document.getElementById('grid');
+  const emptyEl=document.getElementById('empty');
+
+  if(!stocks.length){
+    emptyEl.style.display='block';
+    return;
+  }
+
+  grid.innerHTML=stocks.map(stock=>{
+    const series=history[stock.ticker]||[];
+    return renderCard(stock,series,[]);
+  }).join('');
+}
+
+main().catch(err=>{
+  document.getElementById('grid').innerHTML='<div class="empty">資料載入失敗：'+esc(err.message)+'</div>';
+});
+</script>
+</body>
+</html>

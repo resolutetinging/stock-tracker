@@ -1,0 +1,20 @@
+{
+  "global_defaults": {
+    "daily_change_pct": 5,
+    "check_52w_high_low": true,
+    "pe_ratio_high": null,
+    "pe_ratio_low": null,
+    "yield_pct_low": null
+  },
+  "stocks": [
+    {
+      "ticker": "2330",
+      "name": "台積電",
+      "sector": "半導體",
+      "note": "範例標的，換成你真正想觀察的股票即可",
+      "added_date": "2026-09-11",
+      "active": true,
+      "alert_thresholds": {}
+    }
+  ]
+}
