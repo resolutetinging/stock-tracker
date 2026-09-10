@@ -30,6 +30,13 @@
   .metric-explain{font-size:10.5px;color:#9a9088;line-height:1.5;}
   .spark-wrap{margin:12px 0 4px;}
   .alert-badge{display:inline-block;font-size:11px;font-weight:600;color:#a05a00;background:#fbe8cc;border-radius:20px;padding:3px 10px;margin-bottom:8px;}
+  .intraday{background:#f4f1ec;border-radius:8px;padding:8px 10px;margin:10px 0;}
+  .intraday-label{font-size:10px;color:#9a9088;line-height:1.5;margin-bottom:4px;}
+  .intraday-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .intraday-price{font-size:15px;font-weight:700;}
+  .intraday-time{font-size:10.5px;color:#9a9088;}
+  .intraday-hl{font-size:10.5px;color:#9a9088;margin-top:4px;}
+  .intraday-stale-msg{font-size:12px;color:#9a9088;}
   .empty{max-width:960px;margin:40px auto;padding:0 20px;color:#9a9088;font-size:13px;text-align:center;}
   .footer{max-width:960px;margin:0 auto;padding:20px 20px 40px;color:#9a9088;font-size:11.5px;line-height:1.7;border-top:1px dashed #e5e0d8;}
 </style>
@@ -81,7 +88,34 @@ function changeClass(v){
   return v>0?'up':'down';
 }
 
-function renderCard(stock,series,recentAlerts){
+const INTRADAY_STALE_MS=60*60*1000; // 超過1小時視為資料過舊/非交易時間，避免誤導使用者當成即時價
+const INTRADAY_LABEL='盤中參考（非官方即時資料，約每15分鐘更新，收盤後以官方數字為準）';
+
+function intradayBlock(record,generatedAt){
+  if(!record) return '';
+  const tsStr=record.timestamp||generatedAt;
+  const ts=tsStr?Date.parse(tsStr):NaN;
+  const isStale=isNaN(ts)||(Date.now()-ts)>INTRADAY_STALE_MS;
+
+  if(isStale||record.last_price==null){
+    return `<div class="intraday">
+      <div class="intraday-label">${esc(INTRADAY_LABEL)}</div>
+      <div class="intraday-stale-msg">${isStale?'目前非交易時間或資料過舊，暫無盤中參考價':'查無目前成交價（可能剛好尚無新成交）'}</div>
+    </div>`;
+  }
+
+  return `<div class="intraday">
+    <div class="intraday-label">${esc(INTRADAY_LABEL)}</div>
+    <div class="intraday-row">
+      <span class="intraday-price">${esc(record.last_price)}</span>
+      <span class="change ${changeClass(record.change_pct)}">${fmtPct(record.change_pct)}</span>
+      <span class="intraday-time">${esc(record.data_time||'')}更新</span>
+    </div>
+    <div class="intraday-hl">當日高 ${record.day_high??'—'} ／ 當日低 ${record.day_low??'—'}</div>
+  </div>`;
+}
+
+function renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt){
   const today=series.length?series[series.length-1]:null;
   const closes=series.map(r=>r.close).filter(v=>v!=null);
 
@@ -114,6 +148,7 @@ function renderCard(stock,series,recentAlerts){
     </div>
     ${stock.note?`<div class="note">為什麼關注：${esc(stock.note)}</div>`:''}
     ${priceBlock}
+    ${intradayBlock(intradayRecord,intradayGeneratedAt)}
     <div class="metrics">
       <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${pe??'—'}</div><div class="metric-explain">${peExplain}</div></div>
       <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div></div>
@@ -140,10 +175,14 @@ function recentAlertsForTicker(alertsLog,ticker){
 }
 
 async function main(){
-  const [watchlist,history,alertsLog]=await Promise.all([
+  const [watchlist,history,alertsLog,intraday]=await Promise.all([
     fetch('./data/watchlist.json?v='+Date.now()).then(r=>r.json()),
     fetch('./data/stock_history.json?v='+Date.now()).then(r=>r.json()),
     fetch('./data/alerts_log.json?v='+Date.now()).then(r=>r.json()).catch(()=>({})),
+    // intraday.json是best-effort邊車資料：檔案可能不存在（尚未跑過排程）、
+    // 格式可能跟預期不同（例如排程改版中），任何情況都不能讓整頁crash，
+    // 一律retry退回一個空殼物件，intradayBlock()看到沒有record自然不顯示
+    fetch('./data/intraday.json?v='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null),
   ]);
 
   const stocks=(watchlist.stocks||[]).filter(s=>s.active!==false);
@@ -155,10 +194,14 @@ async function main(){
     return;
   }
 
+  const intradayStocks=(intraday&&typeof intraday==='object'&&intraday.stocks&&typeof intraday.stocks==='object')?intraday.stocks:{};
+  const intradayGeneratedAt=(intraday&&typeof intraday==='object')?intraday.generated_at:null;
+
   grid.innerHTML=stocks.map(stock=>{
     const series=history[stock.ticker]||[];
     const recentAlerts=recentAlertsForTicker(alertsLog,stock.ticker);
-    return renderCard(stock,series,recentAlerts);
+    const intradayRecord=intradayStocks[stock.ticker]||null;
+    return renderCard(stock,series,recentAlerts,intradayRecord,intradayGeneratedAt);
   }).join('');
 }
 

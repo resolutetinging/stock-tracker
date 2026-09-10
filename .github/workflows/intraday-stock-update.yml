@@ -1,0 +1,39 @@
+name: Intraday Stock Update
+
+on:
+  schedule:
+    # 目標：台北時間09:00-13:30（TWSE盤中時段），平日，每15分鐘一次
+    # UTC = 台北時間 - 8小時
+    # 第一段：UTC 01:00-04:45（=台北09:00-12:45），每15分鐘一次
+    - cron: '*/15 1-4 * * 1-5'
+    # 第二段：UTC 05:00/05:15/05:30（=台北13:00/13:15/13:30），收尾到台北13:30
+    - cron: '0,15,30 5 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Pull latest before running (avoid push conflicts)
+        run: git pull --rebase origin main
+
+      - name: Run intraday update script
+        run: python3 scripts/update_intraday.py
+
+      - name: Commit and push data changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto update: intraday stock snapshot"
+          file_pattern: 'data/intraday.json'
