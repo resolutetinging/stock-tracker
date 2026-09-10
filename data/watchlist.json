@@ -80,16 +80,6 @@
       "alert_thresholds": {}
     },
     {
-      "ticker": "8299",
-      "name": "群聯",
-      "sector": "記憶體",
-      "note": "NAND快閃記憶體控制晶片設計商（上櫃股票，只有盤中參考價，沒有歷史股價/本益比/殖利率資料）",
-      "added_date": "2026-09-10",
-      "active": true,
-      "market": "otc",
-      "alert_thresholds": {}
-    },
-    {
       "ticker": "2344",
       "name": "華邦電",
       "sector": "記憶體",
