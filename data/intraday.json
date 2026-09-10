@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-09-10T10:43:28.384659+08:00",
+  "source_note": "盤中參考資料來源：TWSE網站內部AJAX端點（非正式公開API，欄位語意由社群反查與實測確認，非TWSE官方文件保證）。這份資料是查詢當下的快照，僅供收盤前參考，不是券商等級的即時報價，正式數字以收盤後 stock_history.json 的官方資料為準。",
+  "stocks": {
+    "2330": {
+      "last_price": null,
+      "prev_close": 2465.0,
+      "change_pct": null,
+      "day_high": 2455.0,
+      "day_low": 2440.0,
+      "day_open": 2445.0,
+      "accumulated_volume": 7204.0,
+      "data_date": "20260910",
+      "data_time": "10:43:00",
+      "timestamp": "2026-09-10T10:43:00+08:00"
+    },
+    "2454": {
+      "last_price": null,
+      "prev_close": 4625.0,
+      "change_pct": null,
+      "day_high": 4665.0,
+      "day_low": 4520.0,
+      "day_open": 4560.0,
+      "accumulated_volume": 3238.0,
+      "data_date": "20260910",
+      "data_time": "10:42:36",
+      "timestamp": "2026-09-10T10:42:36+08:00"
+    },
+    "2303": {
+      "last_price": null,
+      "prev_close": 141.5,
+      "change_pct": null,
+      "day_high": 145.5,
+      "day_low": 141.5,
+      "day_open": 142.5,
+      "accumulated_volume": 121569.0,
+      "data_date": "20260910",
+      "data_time": "10:42:50",
+      "timestamp": "2026-09-10T10:42:50+08:00"
+    },
+    "2317": {
+      "last_price": 250.0,
+      "prev_close": 252.0,
+      "change_pct": -0.79,
+      "day_high": 251.0,
+      "day_low": 247.5,
+      "day_open": 250.5,
+      "accumulated_volume": 19292.0,
+      "data_date": "20260910",
+      "data_time": "10:42:55",
+      "timestamp": "2026-09-10T10:42:55+08:00"
+    },
+    "2382": {
+      "last_price": null,
+      "prev_close": 342.0,
+      "change_pct": null,
+      "day_high": 340.5,
+      "day_low": 332.0,
+      "day_open": 336.5,
+      "accumulated_volume": 7136.0,
+      "data_date": "20260910",
+      "data_time": "10:43:10",
+      "timestamp": "2026-09-10T10:43:10+08:00"
+    },
+    "3017": {
+      "last_price": null,
+      "prev_close": 3380.0,
+      "change_pct": null,
+      "day_high": 3470.0,
+      "day_low": 3380.0,
+      "day_open": 3405.0,
+      "accumulated_volume": 1662.0,
+      "data_date": "20260910",
+      "data_time": "10:42:40",
+      "timestamp": "2026-09-10T10:42:40+08:00"
+    },
+    "3661": {
+      "last_price": null,
+      "prev_close": 3905.0,
+      "change_pct": null,
+      "day_high": 3930.0,
+      "day_low": 3815.0,
+      "day_open": 3880.0,
+      "accumulated_volume": 927.0,
+      "data_date": "20260910",
+      "data_time": "10:43:14",
+      "timestamp": "2026-09-10T10:43:14+08:00"
+    },
+    "2408": {
+      "last_price": null,
+      "prev_close": 523.0,
+      "change_pct": null,
+      "day_high": 523.0,
+      "day_low": 507.0,
+      "day_open": 517.0,
+      "accumulated_volume": 21981.0,
+      "data_date": "20260910",
+      "data_time": "10:42:36",
+      "timestamp": "2026-09-10T10:42:36+08:00"
+    },
+    "2344": {
+      "last_price": null,
+      "prev_close": 183.0,
+      "change_pct": null,
+      "day_high": 182.5,
+      "day_low": 178.0,
+      "day_open": 181.0,
+      "accumulated_volume": 40502.0,
+      "data_date": "20260910",
+      "data_time": "10:43:00",
+      "timestamp": "2026-09-10T10:43:00+08:00"
+    }
+  }
+}
