@@ -10,7 +10,7 @@
     {
       "ticker": "2330",
       "name": "台積電",
-      "sector": "半導體／AI",
+      "sector": "半導體",
       "note": "全球最大晶圓代工廠，AI晶片與半導體供應鏈核心",
       "added_date": "2026-09-10",
       "active": true,
@@ -84,6 +84,42 @@
       "name": "華邦電",
       "sector": "記憶體",
       "note": "利基型IC與記憶體晶片製造商",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "0050",
+      "name": "元大台灣50",
+      "sector": "ETF",
+      "note": "追蹤台股六十大指數的大盤型ETF",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "006208",
+      "name": "富邦台50",
+      "sector": "ETF",
+      "note": "同樣追蹤台股六十大指數，費用率較低",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "00878",
+      "name": "國泰永續高股息",
+      "sector": "ETF",
+      "note": "以高股息與ESG為訴求的熱門ETF",
+      "added_date": "2026-09-10",
+      "active": true,
+      "alert_thresholds": {}
+    },
+    {
+      "ticker": "00919",
+      "name": "群益台灣精選高息",
+      "sector": "ETF",
+      "note": "另一檔熱門高股息ETF",
       "added_date": "2026-09-10",
       "active": true,
       "alert_thresholds": {}
