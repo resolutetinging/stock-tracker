@@ -6,62 +6,68 @@
 <title>Stock Tracker</title>
 <style>
   *{box-sizing:border-box;}
-  body{margin:0;background:#faf8f4;color:#38342e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;}
-  .header{padding:32px 20px 16px;max-width:960px;margin:0 auto;}
+  :root {
+    --bg:#e8e4de;--surface:#f5f3f0;--card:#faf9f7;--card2:#f0ede9;
+    --border:#d8d4ce;--border2:#c8c4be;
+    --text:#2c2a28;--text2:#4a4744;--muted:#7a756f;--muted2:#9e9890;
+    --shadow:0 1px 4px rgba(0,0,0,.08);
+  }
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;}
+  .header{padding:32px 20px 16px;max-width:960px;margin:0 auto;border-bottom:1px solid var(--border);}
   .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-  .header h1{font-size:22px;margin:0;}
-  .header p{font-size:13px;color:#9a9088;margin:8px 0 0;line-height:1.6;}
+  .header h1{font-size:18px;font-weight:700;margin:0;}
+  .header p{font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.6;}
   .header-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-  .update-freq-badge{display:inline-block;font-size:11px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:3px 10px;}
+  .update-freq-badge{display:inline-block;font-size:12px;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 12px;}
   .tabs{max-width:960px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px;}
-  .tab{font-size:12px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
-  .tab.active{color:#fff;background:#38342e;}
+  .tab{font-size:12px;color:var(--muted);background:var(--card2);border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
+  .tab.active{color:var(--card);background:var(--text);}
   .range-bar{max-width:960px;margin:8px auto 0;padding:0 20px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
-  .range-bar-label{font-size:11px;color:#9a9088;margin-right:2px;}
+  .range-bar-label{font-size:11px;color:var(--muted);margin-right:2px;}
   .range-tab{font-size:12px;color:#8a6a3a;background:#f6ecd9;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
-  .range-tab.active{color:#fff;background:#a05a00;}
+  .range-tab.active{color:var(--card);background:#a05a00;}
   .header-cards{max-width:960px;margin:0 auto;padding:0 20px 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
   .header-cards .note{margin:0 0 10px;}
   .header-cards .note:last-child{margin-bottom:0;}
   .glossary-card summary{cursor:pointer;font-size:16px;font-weight:600;}
-  .glossary-card summary::-webkit-details-marker{color:#9a9088;}
+  .glossary-card summary::-webkit-details-marker{color:var(--muted);}
   .glossary-card .metric-explain{margin-top:10px;line-height:1.8;}
-  .glossary-card .metric-explain strong{color:#38342e;}
+  .glossary-card .metric-explain strong{color:var(--text);}
   .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
-  .card{background:#fff;border:1px solid #e5e0d8;border-radius:14px;padding:16px 18px;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
   .name{font-size:16px;font-weight:600;}
-  .ticker{font-size:12px;color:#9a9088;margin-left:4px;font-weight:400;}
-  .sector{font-size:11px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:3px 10px;white-space:nowrap;}
-  .note{font-size:12.5px;color:#7a7570;background:#f4f1ec;border-radius:8px;padding:8px 10px;margin:10px 0;line-height:1.6;}
+  .ticker{font-size:12px;color:var(--muted);margin-left:4px;font-weight:400;}
+  .sector{font-size:11px;color:var(--muted);background:var(--card2);border-radius:20px;padding:3px 10px;white-space:nowrap;}
+  .note{font-size:12.5px;color:var(--muted);background:var(--card2);border-radius:8px;padding:8px 10px;margin:10px 0;line-height:1.6;}
   .price-row{display:flex;align-items:baseline;gap:8px;margin:10px 0 2px;}
   .price{font-size:26px;font-weight:700;}
   .change{font-size:14px;font-weight:600;}
   .up{color:#c0392b;}
   .down{color:#1e8449;}
-  .flat{color:#9a9088;}
+  .flat{color:var(--muted);}
   .metrics{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px;}
-  .metric{flex:1;min-width:120px;background:#f4f1ec;border-radius:8px;padding:8px 10px;}
-  .metric-label{font-size:10.5px;color:#9a9088;}
+  .metric{flex:1;min-width:120px;background:var(--card2);border-radius:8px;padding:8px 10px;}
+  .metric-label{font-size:10.5px;color:var(--muted);}
   .metric-value{font-size:14px;font-weight:600;margin:2px 0 3px;}
-  .metric-explain{font-size:10.5px;color:#9a9088;line-height:1.5;}
+  .metric-explain{font-size:10.5px;color:var(--muted);line-height:1.5;}
   .spark-wrap{margin:12px 0 4px;}
   .alert-badge{display:inline-block;font-size:11px;font-weight:600;color:#a05a00;background:#fbe8cc;border-radius:20px;padding:3px 10px;margin-bottom:8px;}
-  .intraday{background:#f4f1ec;border-radius:8px;padding:8px 10px;margin:10px 0;}
-  .intraday-label{font-size:10px;color:#9a9088;line-height:1.5;margin-bottom:4px;}
+  .intraday{background:var(--card2);border-radius:8px;padding:8px 10px;margin:10px 0;}
+  .intraday-label{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:4px;}
   .intraday-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
   .intraday-price{font-size:15px;font-weight:700;}
-  .intraday-time{font-size:10.5px;color:#9a9088;}
-  .intraday-hl{font-size:10.5px;color:#9a9088;margin-top:4px;}
-  .intraday-stale-msg{font-size:12px;color:#9a9088;}
-  .empty{max-width:960px;margin:40px auto;padding:0 20px;color:#9a9088;font-size:13px;text-align:center;}
-  .footer{max-width:960px;margin:0 auto;padding:20px 20px 40px;color:#9a9088;font-size:11.5px;line-height:1.7;border-top:1px dashed #e5e0d8;}
+  .intraday-time{font-size:10.5px;color:var(--muted);}
+  .intraday-hl{font-size:10.5px;color:var(--muted);margin-top:4px;}
+  .intraday-stale-msg{font-size:12px;color:var(--muted);}
+  .empty{max-width:960px;margin:40px auto;padding:0 20px;color:var(--muted);font-size:13px;text-align:center;}
+  .footer{max-width:960px;margin:0 auto;padding:20px 20px 40px;color:var(--muted);font-size:11.5px;line-height:1.7;border-top:1px dashed var(--border);}
 </style>
 </head>
 <body>
   <div class="header">
     <div class="header-top">
-      <h1>Stock Tracker</h1>
+      <h1>📈 Stock Tracker</h1>
       <div class="header-badges">
         <span class="update-freq-badge">🕐 盤中09:00-13:30每15分鐘＋盤後15:30 自動更新（平日）</span>
         <span class="update-freq-badge" id="updated-at-badge">📅 載入中…</span>
@@ -73,7 +79,7 @@
     <div id="todayHighlights" class="card highlight-card"></div>
     <div class="card glossary-card">
       <details>
-        <summary>名詞定義小百科（點擊展開）</summary>
+        <summary>📖 名詞定義小百科（點擊展開）</summary>
         <div class="metric-explain">
           <strong>本益比（P/E）</strong>：可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買。<br>
           <strong>殖利率（Dividend Yield）</strong>：用目前股價買進，光靠配息一年大約能拿回股價的百分之多少。<br>
@@ -139,13 +145,13 @@ function sparklineSvg(series){
   const linePts=coords.map(c=>c.x.toFixed(1)+','+c.y.toFixed(1)).join(' ');
   const trendColor=closes[closes.length-1]>=closes[0]?'#c0392b':'#1e8449';
   const startDate=mmdd(pts[0].date),endDate=mmdd(pts[pts.length-1].date);
-  const axisColor='#9a9088';
+  const axisColor='var(--muted)';
   // 文字標籤要畫在polyline之後（SVG依文件順序疊層），否則折線本身
   // 常常剛好經過標籤位置（例如起始點就是最低價），會把數字蓋住看不到
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block">`
     +`<polyline points="${linePts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
-    +`<text x="${padX}" y="10" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="#fff" stroke-width="3">${max}</text>`
-    +`<text x="${padX}" y="${padTop+plotH-2}" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="#fff" stroke-width="3">${min}</text>`
+    +`<text x="${padX}" y="10" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="var(--card)" stroke-width="3">${max}</text>`
+    +`<text x="${padX}" y="${padTop+plotH-2}" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="var(--card)" stroke-width="3">${min}</text>`
     +`<text x="${padX}" y="${padTop+plotH+13}" text-anchor="start" font-size="9" fill="${axisColor}">${startDate}</text>`
     +`<text x="${w-padX}" y="${padTop+plotH+13}" text-anchor="end" font-size="9" fill="${axisColor}">${endDate}</text>`
     +`</svg>`;
@@ -334,7 +340,7 @@ function renderTodayHighlights(cardData){
     +`持平(${trend.flat.length}檔) ${trend.flat.map(n=>esc(n)).join('、')||'—'}<br>`
     +`這只是描述過去5個交易日的價格變化方向，不代表未來走勢。</div>`;
 
-  el.innerHTML=`<div class="name" style="margin-bottom:8px;">今日重點</div>${rankingHtml}${trendHtml}`;
+  el.innerHTML=`<div class="name" style="margin-bottom:8px;">📌 今日重點</div>${rankingHtml}${trendHtml}`;
 }
 
 let allCardData=[]; // 模組層級：main()載入一次後，切換sector tab只重新filter+render，不重新fetch
