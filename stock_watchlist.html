@@ -8,9 +8,11 @@
   *{box-sizing:border-box;}
   body{margin:0;background:#faf8f4;color:#38342e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;}
   .header{padding:32px 20px 16px;max-width:960px;margin:0 auto;}
-  .header h1{font-size:22px;margin:0 0 6px;}
-  .header p{font-size:13px;color:#9a9088;margin:0;line-height:1.6;}
-  .update-freq-badge{display:inline-block;font-size:11px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:3px 10px;margin-top:8px;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .header h1{font-size:22px;margin:0;}
+  .header p{font-size:13px;color:#9a9088;margin:8px 0 0;line-height:1.6;}
+  .header-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .update-freq-badge{display:inline-block;font-size:11px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:3px 10px;}
   .tabs{max-width:960px;margin:0 auto;padding:0 20px;display:flex;flex-wrap:wrap;gap:8px;}
   .tab{font-size:12px;color:#9a9088;background:#f4f1ec;border-radius:20px;padding:5px 14px;white-space:nowrap;cursor:pointer;border:none;font-family:inherit;}
   .tab.active{color:#fff;background:#38342e;}
@@ -58,9 +60,14 @@
 </head>
 <body>
   <div class="header">
-    <h1>Stock Tracker</h1>
+    <div class="header-top">
+      <h1>Stock Tracker</h1>
+      <div class="header-badges">
+        <span class="update-freq-badge">🕐 盤中09:00-13:30每15分鐘＋盤後15:30 自動更新（平日）</span>
+        <span class="update-freq-badge" id="updated-at-badge">📅 載入中…</span>
+      </div>
+    </div>
     <p>追蹤自己選的股票的公開數字變化，資料來源為台灣證券交易所（TWSE）官方公開資料。</p>
-    <span class="update-freq-badge">🕐 盤中09:00-13:30每15分鐘＋盤後15:30 自動更新（平日）</span>
   </div>
   <div class="header-cards">
     <div id="todayHighlights" class="card highlight-card"></div>
@@ -377,6 +384,28 @@ function renderGrid(){
   }).join('');
 }
 
+function formatUpdatedAt(intradayGeneratedAt,history){
+  if(intradayGeneratedAt){
+    const d=new Date(intradayGeneratedAt);
+    if(!isNaN(d.getTime())){
+      const parts=new Intl.DateTimeFormat('zh-Hant-TW',{
+        timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit',
+        hour:'2-digit',minute:'2-digit',hour12:false,
+      }).formatToParts(d).reduce((acc,p)=>{acc[p.type]=p.value;return acc;},{});
+      return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+    }
+  }
+  let latestDate=null;
+  if(history&&typeof history==='object'){
+    Object.values(history).forEach(series=>{
+      if(!Array.isArray(series)||!series.length)return;
+      const last=series[series.length-1];
+      if(last&&last.date&&(!latestDate||last.date>latestDate))latestDate=last.date;
+    });
+  }
+  return latestDate||'—';
+}
+
 async function main(){
   const [watchlist,history,alertsLog,intraday]=await Promise.all([
     fetch('./data/watchlist.json?v='+Date.now()).then(r=>r.json()),
@@ -398,6 +427,11 @@ async function main(){
 
   const intradayStocks=(intraday&&typeof intraday==='object'&&intraday.stocks&&typeof intraday.stocks==='object')?intraday.stocks:{};
   const intradayGeneratedAt=(intraday&&typeof intraday==='object')?intraday.generated_at:null;
+
+  const updatedAtBadge=document.getElementById('updated-at-badge');
+  if(updatedAtBadge){
+    updatedAtBadge.textContent='📅 更新於 '+formatUpdatedAt(intradayGeneratedAt,history);
+  }
 
   allCardData=stocks.map(stock=>({
     stock,
