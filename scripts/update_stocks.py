@@ -348,11 +348,20 @@ def main():
         return
 
     today_str = today_taipei_str()
-    if trade_date != today_str:
-        print(f"TWSE最新資料日期為{trade_date}，非今天({today_str})，可能是非交易日或資料尚未更新，略過本次")
+    history = load_json(HISTORY_PATH, {})
+    # 09-16修正：原本要求trade_date必須「完全等於今天」才處理，但TWSE OpenAPI
+    # 實測公布時間比預期晚（16:02實測仍只回傳前一交易日資料），導致這個嚴格比對
+    # 從09-10起連續多個交易日都判定「非今天」而略過，history.json靜默卡在09-09
+    # 長達一週、所有排程執行卻都回報success（不是腳本出錯，是判斷條件本身太嚴）。
+    # 改成跟現有資料比「有沒有比已存的新」，交易日當天或隔天才抓到都能正確入庫，
+    # 不依賴TWSE公布時間點跟workflow觸發時間點剛好對上；upsert_history()本身已
+    # 用日期去重保證同一天重跑不會重複寫入，這裡不需要額外嚴格要求trade_date==today。
+    existing_dates = [series[-1]["date"] for series in history.values() if series]
+    latest_stored = max(existing_dates) if existing_dates else None
+    if latest_stored and trade_date <= latest_stored:
+        print(f"TWSE最新資料日期為{trade_date}，未比已存資料({latest_stored})新，略過本次（今天日期：{today_str}）")
         return
 
-    history = load_json(HISTORY_PATH, {})
     for ticker, record in records.items():
         upsert_history(history, ticker, record)
     save_json(HISTORY_PATH, history)
