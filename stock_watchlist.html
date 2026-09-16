@@ -29,8 +29,6 @@
   .header-cards{max-width:960px;margin:0 auto;padding:0 20px 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;}
   .header-cards .note{margin:0 0 10px;}
   .header-cards .note:last-child{margin-bottom:0;}
-  .glossary-card summary{cursor:pointer;font-size:16px;font-weight:600;}
-  .glossary-card summary::-webkit-details-marker{color:var(--muted);}
   .glossary-card .metric-explain{margin-top:10px;line-height:1.8;}
   .glossary-card .metric-explain strong{color:var(--text);}
   .grid{max-width:960px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
@@ -78,17 +76,15 @@
   <div class="header-cards">
     <div id="todayHighlights" class="card highlight-card"></div>
     <div class="card glossary-card">
-      <details>
-        <summary>📖 名詞定義小百科（點擊展開）</summary>
-        <div class="metric-explain">
-          <strong>本益比（P/E）</strong>：可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買。<br>
-          <strong>殖利率（Dividend Yield）</strong>：用目前股價買進，光靠配息一年大約能拿回股價的百分之多少。<br>
-          <strong>股價淨值比（P/B）</strong>：股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值。<br>
-          <strong>歷史相對位置／百分位</strong>：把目前的數字拿來跟這檔股票自己過去一段時間（依你選的時間範圍）比較，算出目前排在過去所有數字裡的第幾百分位，只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。<br>
-          <strong>盤中參考價</strong>：交易時間內約每15分鐘更新一次的非官方參考價格，收盤後仍以官方公布數字為準，超過1小時未更新就不顯示，避免誤以為是即時報價。<br>
-          <strong>ETF</strong>：一籃子股票打包成一張可以在市場上買賣的憑證，這份觀察名單裡有4檔ETF，通常沒有本益比、殖利率、股價淨值比這些個股才有的指標。
-        </div>
-      </details>
+      <div class="name" style="margin-bottom:8px;">📖 名詞定義小百科</div>
+      <div class="metric-explain">
+        <strong>本益比（P/E）</strong>：可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買。<br>
+        <strong>殖利率（Dividend Yield）</strong>：用目前股價買進，光靠配息一年大約能拿回股價的百分之多少。<br>
+        <strong>股價淨值比（P/B）</strong>：股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值。<br>
+        <strong>歷史相對位置／百分位</strong>：把目前的數字拿來跟這檔股票自己過去一段時間（依你選的時間範圍）比較，算出目前排在過去所有數字裡的第幾百分位，只是單純描述現在跟自己過去比是高是低，不代表未來走勢或買賣時機。<br>
+        <strong>盤中參考價</strong>：交易時間內約每15分鐘更新一次的非官方參考價格，收盤後仍以官方公布數字為準，超過1小時未更新就不顯示，避免誤以為是即時報價。<br>
+        <strong>ETF</strong>：一籃子股票打包成一張可以在市場上買賣的憑證，這份觀察名單裡有4檔ETF，通常沒有本益比、殖利率、股價淨值比這些個股才有的指標。
+      </div>
     </div>
   </div>
   <div id="tabs" class="tabs"></div>
