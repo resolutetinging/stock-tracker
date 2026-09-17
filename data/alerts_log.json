@@ -1,1 +1,14 @@
-{}
+{
+  "2408:daily_change_pct": {
+    "last_sent_date": "2026-09-17",
+    "last_value": 5.8
+  },
+  "2344:daily_change_pct": {
+    "last_sent_date": "2026-09-17",
+    "last_value": 5.96
+  },
+  "00878:52w_high": {
+    "last_sent_date": "2026-09-17",
+    "last_value": 34.47
+  }
+}
