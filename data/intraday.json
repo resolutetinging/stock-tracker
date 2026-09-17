@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T13:36:48.959623+08:00",
+  "generated_at": "2026-09-17T17:49:59.124939+08:00",
   "source_note": "盤中參考資料來源：TWSE網站內部AJAX端點（非正式公開API，欄位語意由社群反查與實測確認，非TWSE官方文件保證）。這份資料是查詢當下的快照，僅供收盤前參考，不是券商等級的即時報價，正式數字以收盤後 stock_history.json 的官方資料為準。",
   "stocks": {
     "2330": {
@@ -12,7 +12,7 @@
       "accumulated_volume": 15951.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2454": {
       "last_price": 4500.0,
@@ -24,7 +24,7 @@
       "accumulated_volume": 5930.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2303": {
       "last_price": 147.5,
@@ -36,7 +36,7 @@
       "accumulated_volume": 253103.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2317": {
       "last_price": 250.5,
@@ -48,7 +48,7 @@
       "accumulated_volume": 25729.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2382": {
       "last_price": 344.0,
@@ -60,7 +60,7 @@
       "accumulated_volume": 15903.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "3017": {
       "last_price": 3185.0,
@@ -72,7 +72,7 @@
       "accumulated_volume": 2862.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "3661": {
       "last_price": 3295.0,
@@ -84,7 +84,7 @@
       "accumulated_volume": 2891.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2408": {
       "last_price": 488.0,
@@ -96,7 +96,7 @@
       "accumulated_volume": 43865.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "2344": {
       "last_price": 170.0,
@@ -108,7 +108,7 @@
       "accumulated_volume": 118336.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "0050": {
       "last_price": 108.05,
@@ -120,7 +120,7 @@
       "accumulated_volume": 47153.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "006208": {
       "last_price": 247.4,
@@ -132,7 +132,7 @@
       "accumulated_volume": 1120.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "00878": {
       "last_price": 34.73,
@@ -144,7 +144,7 @@
       "accumulated_volume": 26122.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     },
     "00919": {
       "last_price": 32.11,
@@ -156,7 +156,7 @@
       "accumulated_volume": 86168.0,
       "data_date": "20260917",
       "data_time": "13:30:00",
-      "timestamp": "2026-09-17T13:30:00+08:00"
+      "timestamp": "2026-09-17T14:30:00+08:00"
     }
   }
 }
