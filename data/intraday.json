@@ -1,42 +1,42 @@
 {
-  "generated_at": "2026-09-23T13:23:25.515879+08:00",
+  "generated_at": "2026-09-23T17:45:35.133307+08:00",
   "source_note": "盤中參考資料來源：TWSE網站內部AJAX端點（非正式公開API，欄位語意由社群反查與實測確認，非TWSE官方文件保證）。這份資料是查詢當下的快照，僅供收盤前參考，不是券商等級的即時報價，正式數字以收盤後 stock_history.json 的官方資料為準。",
   "stocks": {
     "2330": {
-      "last_price": null,
+      "last_price": 2500.0,
       "prev_close": 2460.0,
-      "change_pct": null,
+      "change_pct": 1.63,
       "day_high": 2505.0,
       "day_low": 2475.0,
       "day_open": 2475.0,
-      "accumulated_volume": 16491.0,
+      "accumulated_volume": 20325.0,
       "data_date": "20260923",
-      "data_time": "13:23:10",
-      "timestamp": "2026-09-23T13:23:10+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2454": {
-      "last_price": null,
+      "last_price": 5185.0,
       "prev_close": 5180.0,
-      "change_pct": null,
+      "change_pct": 0.1,
       "day_high": 5265.0,
       "day_low": 5140.0,
       "day_open": 5220.0,
-      "accumulated_volume": 5279.0,
+      "accumulated_volume": 5902.0,
       "data_date": "20260923",
-      "data_time": "13:23:15",
-      "timestamp": "2026-09-23T13:23:15+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2303": {
-      "last_price": null,
+      "last_price": 160.0,
       "prev_close": 160.0,
-      "change_pct": null,
+      "change_pct": 0.0,
       "day_high": 163.0,
       "day_low": 158.0,
       "day_open": 163.0,
-      "accumulated_volume": 114697.0,
+      "accumulated_volume": 122691.0,
       "data_date": "20260923",
-      "data_time": "13:23:10",
-      "timestamp": "2026-09-23T13:23:10+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2317": {
       "last_price": 256.0,
@@ -45,118 +45,118 @@
       "day_high": 257.0,
       "day_low": 255.0,
       "day_open": 255.0,
-      "accumulated_volume": 31552.0,
+      "accumulated_volume": 34627.0,
       "data_date": "20260923",
-      "data_time": "13:23:10",
-      "timestamp": "2026-09-23T13:23:10+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2382": {
-      "last_price": 340.5,
+      "last_price": 341.5,
       "prev_close": 342.0,
-      "change_pct": -0.44,
+      "change_pct": -0.15,
       "day_high": 343.0,
       "day_low": 340.0,
       "day_open": 342.5,
-      "accumulated_volume": 8088.0,
+      "accumulated_volume": 9362.0,
       "data_date": "20260923",
-      "data_time": "13:23:10",
-      "timestamp": "2026-09-23T13:23:10+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "3017": {
-      "last_price": null,
+      "last_price": 3470.0,
       "prev_close": 3390.0,
-      "change_pct": null,
+      "change_pct": 2.36,
       "day_high": 3590.0,
       "day_low": 3410.0,
       "day_open": 3425.0,
-      "accumulated_volume": 2270.0,
+      "accumulated_volume": 2485.0,
       "data_date": "20260923",
-      "data_time": "13:23:06",
-      "timestamp": "2026-09-23T13:23:06+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "3661": {
-      "last_price": null,
+      "last_price": 3760.0,
       "prev_close": 3715.0,
-      "change_pct": null,
+      "change_pct": 1.21,
       "day_high": 3845.0,
       "day_low": 3715.0,
       "day_open": 3790.0,
-      "accumulated_volume": 1469.0,
+      "accumulated_volume": 1611.0,
       "data_date": "20260923",
-      "data_time": "13:23:07",
-      "timestamp": "2026-09-23T13:23:07+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2408": {
-      "last_price": 516.0,
+      "last_price": 515.0,
       "prev_close": 497.0,
-      "change_pct": 3.82,
+      "change_pct": 3.62,
       "day_high": 526.0,
       "day_low": 513.0,
       "day_open": 514.0,
-      "accumulated_volume": 57194.0,
+      "accumulated_volume": 60389.0,
       "data_date": "20260923",
-      "data_time": "13:23:16",
-      "timestamp": "2026-09-23T13:23:16+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "2344": {
-      "last_price": null,
+      "last_price": 172.5,
       "prev_close": 171.0,
-      "change_pct": null,
+      "change_pct": 0.88,
       "day_high": 177.0,
       "day_low": 172.0,
       "day_open": 175.0,
-      "accumulated_volume": 65099.0,
+      "accumulated_volume": 69699.0,
       "data_date": "20260923",
-      "data_time": "13:23:10",
-      "timestamp": "2026-09-23T13:23:10+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "0050": {
-      "last_price": null,
+      "last_price": 112.45,
       "prev_close": 111.85,
-      "change_pct": null,
+      "change_pct": 0.54,
       "day_high": 113.15,
       "day_low": 112.3,
       "day_open": 112.8,
-      "accumulated_volume": 53217.0,
+      "accumulated_volume": 55272.0,
       "data_date": "20260923",
-      "data_time": "13:23:19",
-      "timestamp": "2026-09-23T13:23:19+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "006208": {
-      "last_price": null,
+      "last_price": 257.0,
       "prev_close": 255.7,
-      "change_pct": null,
+      "change_pct": 0.51,
       "day_high": 258.6,
       "day_low": 256.7,
       "day_open": 257.15,
-      "accumulated_volume": 1043.0,
+      "accumulated_volume": 1076.0,
       "data_date": "20260923",
-      "data_time": "13:23:09",
-      "timestamp": "2026-09-23T13:23:09+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "00878": {
-      "last_price": null,
+      "last_price": 35.09,
       "prev_close": 35.21,
-      "change_pct": null,
+      "change_pct": -0.34,
       "day_high": 35.36,
       "day_low": 35.08,
       "day_open": 35.3,
-      "accumulated_volume": 23905.0,
+      "accumulated_volume": 24973.0,
       "data_date": "20260923",
-      "data_time": "13:23:09",
-      "timestamp": "2026-09-23T13:23:09+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     },
     "00919": {
-      "last_price": null,
+      "last_price": 32.06,
       "prev_close": 32.16,
-      "change_pct": null,
+      "change_pct": -0.31,
       "day_high": 32.25,
       "day_low": 32.0,
       "day_open": 32.21,
-      "accumulated_volume": 51261.0,
+      "accumulated_volume": 53731.0,
       "data_date": "20260923",
-      "data_time": "13:23:09",
-      "timestamp": "2026-09-23T13:23:09+08:00"
+      "data_time": "13:30:00",
+      "timestamp": "2026-09-23T14:30:00+08:00"
     }
   }
 }
