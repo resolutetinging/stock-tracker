@@ -32,7 +32,15 @@
     "last_value": 5285.0
   },
   "0050:52w_high": {
-    "last_sent_date": "2026-09-24",
-    "last_value": 112.45
+    "last_sent_date": "2026-10-02",
+    "last_value": 112.9
+  },
+  "2330:52w_high": {
+    "last_sent_date": "2026-10-02",
+    "last_value": 2510.0
+  },
+  "006208:52w_high": {
+    "last_sent_date": "2026-10-02",
+    "last_value": 258.25
   }
 }
