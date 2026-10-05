@@ -98,6 +98,8 @@
 <script>
 const RULE_LABELS={daily_change_pct:'單日漲跌幅',pe_ratio_high:'本益比偏高',pe_ratio_low:'本益比偏低',yield_pct_low:'殖利率偏低','52w_high':'52週新高','52w_low':'52週新低'};
 
+// 數值轉型：缺值或非數字回傳 null（顯示成 —），避免髒資料以字串形式進入 innerHTML
+function numOrNull(v){ if(v==null||v==='')return null; const n=Number(v); return Number.isFinite(n)?n:null; }
 function esc(s){
   // 10-05 XSS：完整跳脫 & < > " '（innerHTML 取值不會跳脫引號，屬性內不安全）
   return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -207,7 +209,7 @@ function intradayBlock(record,generatedAt){
       <span class="change ${changeClass(record.change_pct)}">${fmtPct(record.change_pct)}</span>
       <span class="intraday-time">${esc(record.data_time||'')}更新</span>
     </div>
-    <div class="intraday-hl">當日高 ${record.day_high??'—'} ／ 當日低 ${record.day_low??'—'}</div>
+    <div class="intraday-hl">當日高 ${esc(numOrNull(record.day_high)??'—')} ／ 當日低 ${esc(numOrNull(record.day_low)??'—')}</div>
   </div>`;
 }
 
@@ -218,20 +220,20 @@ function renderCard(stock,fullSeries,filteredSeries,recentAlerts,intradayRecord,
   const today=fullSeries.length?fullSeries[fullSeries.length-1]:null;
 
   const priceBlock=today
-    ? `<div class="price-row"><span class="price">${today.close??'—'}</span>`
+    ? `<div class="price-row"><span class="price">${esc(numOrNull(today.close)??'—')}</span>`
       +`<span class="change ${changeClass(today.change_pct)}">${fmtPct(today.change_pct)}</span></div>`
     : `<div class="price-row"><span class="price">尚無資料</span></div>`;
 
-  const pe=today?.pe_ratio;
-  const yieldPct=today?.dividend_yield;
-  const pb=today?.pb_ratio;
+  const pe=numOrNull(today?.pe_ratio);
+  const yieldPct=numOrNull(today?.dividend_yield);
+  const pb=numOrNull(today?.pb_ratio);
 
   const peExplain=pe==null
     ? '（虧損公司或ETF等類型通常沒有本益比）'
     : '可以想成「要用幾年的獲利才能打平買股票的錢」，數字越低代表相對便宜，但不代表一定該買';
   const yieldExplain=yieldPct==null
     ? '查無資料'
-    : `用目前股價買進，光靠配息一年大約能拿回股價的${yieldPct}%`;
+    : `用目前股價買進，光靠配息一年大約能拿回股價的${esc(yieldPct)}%`;
   const pbExplain=pb==null
     ? '查無資料'
     : '股價是公司帳面淨值的幾倍，數字越接近1代表股價越貼近帳面價值';
@@ -251,9 +253,9 @@ function renderCard(stock,fullSeries,filteredSeries,recentAlerts,intradayRecord,
     ${priceBlock}
     ${intradayBlock(intradayRecord,intradayGeneratedAt)}
     <div class="metrics">
-      <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${pe??'—'}</div><div class="metric-explain">${peExplain}</div>${histPositionBlock(peHist,'')}</div>
-      <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?yieldPct+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div>${histPositionBlock(yieldHist,'%')}</div>
-      <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${pb??'—'}</div><div class="metric-explain">${pbExplain}</div></div>
+      <div class="metric"><div class="metric-label">本益比</div><div class="metric-value">${esc(pe??'—')}</div><div class="metric-explain">${peExplain}</div>${histPositionBlock(peHist,'')}</div>
+      <div class="metric"><div class="metric-label">殖利率</div><div class="metric-value">${yieldPct!=null?esc(yieldPct)+'%':'—'}</div><div class="metric-explain">${yieldExplain}</div>${histPositionBlock(yieldHist,'%')}</div>
+      <div class="metric"><div class="metric-label">股價淨值比</div><div class="metric-value">${esc(pb??'—')}</div><div class="metric-explain">${pbExplain}</div></div>
     </div>
     <div class="spark-wrap">${sparklineSvg(filteredSeries)}</div>
   </div>`;
