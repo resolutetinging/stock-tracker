@@ -99,9 +99,8 @@
 const RULE_LABELS={daily_change_pct:'單日漲跌幅',pe_ratio_high:'本益比偏高',pe_ratio_low:'本益比偏低',yield_pct_low:'殖利率偏低','52w_high':'52週新高','52w_low':'52週新低'};
 
 function esc(s){
-  const d=document.createElement('div');
-  d.textContent=s==null?'':String(s);
-  return d.innerHTML;
+  // 10-05 XSS：完整跳脫 & < > " '（innerHTML 取值不會跳脫引號，屬性內不安全）
+  return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function mmdd(dateStr){
@@ -148,8 +147,8 @@ function sparklineSvg(series){
     +`<polyline points="${linePts}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
     +`<text x="${padX}" y="10" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="var(--card)" stroke-width="3">${max}</text>`
     +`<text x="${padX}" y="${padTop+plotH-2}" font-size="9" fill="${axisColor}" paint-order="stroke" stroke="var(--card)" stroke-width="3">${min}</text>`
-    +`<text x="${padX}" y="${padTop+plotH+13}" text-anchor="start" font-size="9" fill="${axisColor}">${startDate}</text>`
-    +`<text x="${w-padX}" y="${padTop+plotH+13}" text-anchor="end" font-size="9" fill="${axisColor}">${endDate}</text>`
+    +`<text x="${padX}" y="${padTop+plotH+13}" text-anchor="start" font-size="9" fill="${axisColor}">${esc(startDate)}</text>`
+    +`<text x="${w-padX}" y="${padTop+plotH+13}" text-anchor="end" font-size="9" fill="${axisColor}">${esc(endDate)}</text>`
     +`</svg>`;
 }
 
