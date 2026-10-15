@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""台股觀察名單追蹤器：抓TWSE官方資料、比對alert規則、有異常才寄信。
+"""台股觀察名單追蹤器：抓TWSE官方資料、比對alert規則、有異常寫入alerts_log。
 數字一律來自TWSE官方API直接算出，LLM只負責把數字變化轉譯成白話一句話，
 不生成任何數字、不給買賣建議（比照Renewable Tracker的既有原則）。
 """
 import json
 import os
-import smtplib
 import sys
 from datetime import datetime, timezone, timedelta
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 import requests
 
@@ -26,7 +23,6 @@ MAX_HISTORY_LEN = 260  # 約一年交易日，供52週高低判斷
 MIN_HISTORY_FOR_52W = 60  # 累積不到這麼多筆，52週高低規則先不啟用
 COOLDOWN_DAYS = 7  # 狀態持續型alert的預設冷卻天數
 
-GROQ_MODELS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]
 
 TAIPEI_TZ = timezone(timedelta(hours=8))
 
@@ -230,105 +226,6 @@ def filter_new_alerts(alerts, alerts_log, today_str):
     return to_send
 
 
-RULE_LABELS = {
-    "daily_change_pct": "單日漲跌幅",
-    "52w_high": "52週新高",
-    "52w_low": "52週新低",
-    "pe_ratio_high": "本益比偏高",
-    "pe_ratio_low": "本益比偏低",
-    "yield_pct_low": "殖利率偏低",
-}
-
-
-def fallback_template(alerts):
-    """Groq呼叫失敗時的保底：純模板字串，確保email一定寄得出去"""
-    lines = []
-    for a in alerts:
-        label = RULE_LABELS.get(a["rule_type"], a["rule_type"])
-        if a["rule_type"] == "daily_change_pct":
-            direction = "漲" if a["value"] > 0 else "跌"
-            lines.append(f"{a['name']}（{a['ticker']}）今天收盤{direction}了{abs(a['value']):.1f}%，超過你設定的{a['threshold']}%提醒門檻。")
-        elif a["rule_type"] in ("52w_high", "52w_low"):
-            lines.append(f"{a['name']}（{a['ticker']}）今天收盤價{a['value']}元，創下近一年的{label}。")
-        else:
-            lines.append(f"{a['name']}（{a['ticker']}）目前{label}，數值為{a['value']}（門檻{a['threshold']}）。")
-    return "\n".join(lines)
-
-
-def call_groq_for_alerts(alerts):
-    """把當次alert一次送進Groq轉譯成白話，明確禁止給買賣建議。失敗回傳None讓呼叫端fallback"""
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        return None
-    try:
-        from groq import Groq
-    except ImportError:
-        return None
-
-    alert_lines = []
-    for a in alerts:
-        label = RULE_LABELS.get(a["rule_type"], a["rule_type"])
-        alert_lines.append(f"- {a['name']}（{a['ticker']}）觸發「{label}」，數值{a.get('value')}"
-                            + (f"，門檻{a['threshold']}" if a.get("threshold") is not None else ""))
-
-    prompt = (
-        "你是一個幫不懂投資的人把股票數字變化講成白話的小助手。以下是今天觸發的提醒項目：\n"
-        + "\n".join(alert_lines)
-        + "\n\n請針對每一項用一句話解釋這個數字變化「代表什麼意思」，用詞盡量白話，"
-        "不要用艱澀術語堆疊。絕對禁止：不能給任何買進/賣出/加碼/減碼建議，"
-        "不能預測未來走勢，不能說「這是好時機」或「應該要」這類建議語氣。"
-        "只能客觀解釋數字的意義。直接輸出純文字，每項一行，不要用markdown、不要用JSON，"
-        "務必使用繁體中文（台灣正體），禁止簡體字與日文漢字。"
-    )
-
-    client = Groq(api_key=api_key)
-    for model in GROQ_MODELS:
-        try:
-            resp = client.chat.completions.create(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                max_tokens=1000,
-                reasoning_effort="low",
-            )
-            content = resp.choices[0].message.content or ""
-            content = content.strip()
-            if content:
-                return content
-        except Exception as e:  # noqa: BLE001 - 413等API層錯誤，換下一個model重試
-            print(f"  ⚠ Groq呼叫失敗（{model}）：{e}")
-            continue
-    return None
-
-
-def send_email(subject, plain_body):
-    gmail_user = os.environ.get("GMAIL_USER")
-    gmail_pass = os.environ.get("GMAIL_APP_PASSWORD")
-    recipient = os.environ.get("NOTIFY_EMAIL")
-    if not (gmail_user and gmail_pass and recipient):
-        print("  ⚠ 缺少email環境變數，略過寄信")
-        return
-
-    disclaimer = (
-        "\n\n---\n這個工具只是幫你追蹤自己選的股票的公開數字變化，"
-        "所有內容是資料整理與白話翻譯，不構成任何投資建議，買賣決定與風險請自行判斷。"
-    )
-    html_lines = "".join(f"<div>• {line}</div>" for line in plain_body.split("\n") if line.strip())
-    html_body = f"<div>{html_lines}</div><div style='color:#888;margin-top:16px;font-size:12px;'>{disclaimer}</div>"
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = gmail_user
-    msg["To"] = recipient
-    msg.attach(MIMEText(plain_body + disclaimer, "plain", "utf-8"))
-    msg.attach(MIMEText(html_body, "html", "utf-8"))
-
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(gmail_user, gmail_pass)
-        server.sendmail(gmail_user, [recipient], msg.as_string())
-    print("  ✓ 已寄出提醒信")
-
-
 def main():
     watchlist = load_json(WATCHLIST_PATH, {"global_defaults": {}, "stocks": []})
     defaults = watchlist.get("global_defaults", {})
@@ -373,24 +270,14 @@ def main():
         all_alerts.extend(check_alerts(stock, defaults, series))
 
     if not all_alerts:
-        print("今天沒有觸發任何alert，不寄信")
+        print("今天沒有觸發任何alert")
         return
 
     alerts_log = load_json(ALERTS_LOG_PATH, {})
     new_alerts = filter_new_alerts(all_alerts, alerts_log, today_str)
     save_json(ALERTS_LOG_PATH, alerts_log)
 
-    if not new_alerts:
-        print(f"觸發{len(all_alerts)}項alert，但都在冷卻期內，不重複寄信")
-        return
-
-    print(f"觸發{len(new_alerts)}項新alert，準備寄信")
-    body = call_groq_for_alerts(new_alerts)
-    if not body:
-        print("  Groq轉譯失敗或無金鑰，改用模板字串")
-        body = fallback_template(new_alerts)
-
-    send_email(f"股票觀察名單提醒：{len(new_alerts)}項異動（{trade_date}）", body)
+    print(f"觸發{len(all_alerts)}項alert，其中{len(new_alerts)}項為新alert（已寫入alerts_log.json）")
 
 
 if __name__ == "__main__":

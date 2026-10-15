@@ -3,7 +3,7 @@ name: Daily Stock Update
 on:
   schedule:
     # 平日 UTC 07:30 = 台北時間 15:30，TWSE盤後資料留緩衝時間
-    # 刻意跟現有排程（nvidia/renewable週日16:00 UTC、industry-adoption每月1號16:00 UTC）錯開，避免Groq TPM疊加
+    # 刻意跟現有排程（nvidia/renewable週日16:00 UTC、industry-adoption每月1號16:00 UTC）錯開
     - cron: '30 7 * * 1-5'
   workflow_dispatch:
 
@@ -27,11 +27,6 @@ jobs:
         run: git pull --rebase origin main
 
       - name: Run update script
-        env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
         run: python3 scripts/update_stocks.py
 
       - name: Commit and push data changes
