@@ -2258,6 +2258,15 @@
       "pe_ratio": 27.88,
       "dividend_yield": 0.91,
       "pb_ratio": 9.7
+    },
+    {
+      "date": "2026-10-21",
+      "close": 2420.0,
+      "change_pct": 0.62,
+      "volume": 27095005.0,
+      "pe_ratio": 28.05,
+      "dividend_yield": 0.91,
+      "pb_ratio": 9.76
     }
   ],
   "2454": [
@@ -4519,6 +4528,15 @@
       "pe_ratio": 68.54,
       "dividend_yield": 1.29,
       "pb_ratio": 15.62
+    },
+    {
+      "date": "2026-10-21",
+      "close": 4140.0,
+      "change_pct": -0.24,
+      "volume": 9351855.0,
+      "pe_ratio": 68.37,
+      "dividend_yield": 1.29,
+      "pb_ratio": 15.58
     }
   ],
   "2303": [
@@ -6780,6 +6798,15 @@
       "pe_ratio": 19.1,
       "dividend_yield": 2.06,
       "pb_ratio": 3.59
+    },
+    {
+      "date": "2026-10-21",
+      "close": 128.0,
+      "change_pct": 0.79,
+      "volume": 73831482.0,
+      "pe_ratio": 19.25,
+      "dividend_yield": 2.04,
+      "pb_ratio": 3.62
     }
   ],
   "2317": [
@@ -9041,6 +9068,15 @@
       "pe_ratio": 15.92,
       "dividend_yield": 2.97,
       "pb_ratio": 1.78
+    },
+    {
+      "date": "2026-10-21",
+      "close": 250.0,
+      "change_pct": 3.52,
+      "volume": 54598076.0,
+      "pe_ratio": 16.48,
+      "dividend_yield": 2.87,
+      "pb_ratio": 1.84
     }
   ],
   "2382": [
@@ -11302,6 +11338,15 @@
       "pe_ratio": 13.97,
       "dividend_yield": 4.87,
       "pb_ratio": 5.07
+    },
+    {
+      "date": "2026-10-21",
+      "close": 328.5,
+      "change_pct": 2.5,
+      "volume": 10432299.0,
+      "pe_ratio": 14.31,
+      "dividend_yield": 4.75,
+      "pb_ratio": 5.2
     }
   ],
   "3017": [
@@ -13563,6 +13608,15 @@
       "pe_ratio": 44.32,
       "dividend_yield": 0.63,
       "pb_ratio": 23.65
+    },
+    {
+      "date": "2026-10-21",
+      "close": 3235.0,
+      "change_pct": -2.71,
+      "volume": 3944666.0,
+      "pe_ratio": 43.12,
+      "dividend_yield": 0.65,
+      "pb_ratio": 23.01
     }
   ],
   "3661": [
@@ -15824,6 +15878,15 @@
       "pe_ratio": 53.39,
       "dividend_yield": 0.89,
       "pb_ratio": 5.2
+    },
+    {
+      "date": "2026-10-21",
+      "close": 3710.0,
+      "change_pct": 1.92,
+      "volume": 1280895.0,
+      "pe_ratio": 54.41,
+      "dividend_yield": 0.88,
+      "pb_ratio": 5.3
     }
   ],
   "2408": [
@@ -18085,6 +18148,15 @@
       "pe_ratio": 16.38,
       "dividend_yield": 0.32,
       "pb_ratio": 4.51
+    },
+    {
+      "date": "2026-10-21",
+      "close": 436.5,
+      "change_pct": 3.44,
+      "volume": 31832407.0,
+      "pe_ratio": 16.94,
+      "dividend_yield": 0.31,
+      "pb_ratio": 4.67
     }
   ],
   "2344": [
@@ -20346,6 +20418,15 @@
       "pe_ratio": 16.81,
       "dividend_yield": 0.33,
       "pb_ratio": 4.16
+    },
+    {
+      "date": "2026-10-21",
+      "close": 159.5,
+      "change_pct": 4.59,
+      "volume": 49966848.0,
+      "pe_ratio": 17.59,
+      "dividend_yield": 0.31,
+      "pb_ratio": 4.35
     }
   ],
   "0050": [
@@ -22604,6 +22685,15 @@
       "close": 107.25,
       "change_pct": -0.83,
       "volume": 123086544.0,
+      "pe_ratio": null,
+      "dividend_yield": null,
+      "pb_ratio": null
+    },
+    {
+      "date": "2026-10-21",
+      "close": 108.15,
+      "change_pct": 0.84,
+      "volume": 83301839.0,
       "pe_ratio": null,
       "dividend_yield": null,
       "pb_ratio": null
@@ -24868,6 +24958,15 @@
       "pe_ratio": null,
       "dividend_yield": null,
       "pb_ratio": null
+    },
+    {
+      "date": "2026-10-21",
+      "close": 247.6,
+      "change_pct": 0.94,
+      "volume": 1502303.0,
+      "pe_ratio": null,
+      "dividend_yield": null,
+      "pb_ratio": null
     }
   ],
   "00878": [
@@ -27129,6 +27228,15 @@
       "pe_ratio": null,
       "dividend_yield": null,
       "pb_ratio": null
+    },
+    {
+      "date": "2026-10-21",
+      "close": 35.39,
+      "change_pct": 1.46,
+      "volume": 18871497.0,
+      "pe_ratio": null,
+      "dividend_yield": null,
+      "pb_ratio": null
     }
   ],
   "00919": [
@@ -29387,6 +29495,15 @@
       "close": 32.09,
       "change_pct": -1.11,
       "volume": 76601191.0,
+      "pe_ratio": null,
+      "dividend_yield": null,
+      "pb_ratio": null
+    },
+    {
+      "date": "2026-10-21",
+      "close": 32.53,
+      "change_pct": 1.37,
+      "volume": 51682910.0,
       "pe_ratio": null,
       "dividend_yield": null,
       "pb_ratio": null
