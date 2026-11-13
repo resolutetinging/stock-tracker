@@ -4,8 +4,8 @@
     "last_value": 7.71
   },
   "2344:daily_change_pct": {
-    "last_sent_date": "2026-11-10",
-    "last_value": -5.49
+    "last_sent_date": "2026-11-13",
+    "last_value": -6.59
   },
   "00878:52w_high": {
     "last_sent_date": "2026-10-29",
@@ -58,5 +58,9 @@
   "0050:daily_change_pct": {
     "last_sent_date": "2026-11-10",
     "last_value": 5.35
+  },
+  "2382:daily_change_pct": {
+    "last_sent_date": "2026-11-13",
+    "last_value": -6.54
   }
 }
