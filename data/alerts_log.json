@@ -1,31 +1,31 @@
 {
   "2408:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 6.24
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.96
   },
   "2344:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 7.06
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.95
   },
   "00878:52w_high": {
     "last_sent_date": "2026-10-29",
     "last_value": 35.65
   },
   "2303:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 9.96
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.97
   },
   "3017:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 7.26
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.94
   },
   "3661:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 9.88
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.97
   },
   "2454:daily_change_pct": {
-    "last_sent_date": "2026-11-25",
-    "last_value": 10.0
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.91
   },
   "2454:52w_high": {
     "last_sent_date": "2026-09-25",
@@ -48,35 +48,35 @@
     "last_value": 3685.0
   },
   "006208:daily_change_pct": {
-    "last_sent_date": "2026-11-24",
-    "last_value": -6.34
+    "last_sent_date": "2026-11-26",
+    "last_value": 10.0
   },
   "2317:daily_change_pct": {
-    "last_sent_date": "2026-11-18",
-    "last_value": -9.34
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.95
   },
   "0050:daily_change_pct": {
-    "last_sent_date": "2026-11-24",
-    "last_value": -6.37
+    "last_sent_date": "2026-11-26",
+    "last_value": 10.0
   },
   "2382:daily_change_pct": {
-    "last_sent_date": "2026-11-13",
-    "last_value": -6.54
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.92
   },
   "2330:daily_change_pct": {
-    "last_sent_date": "2026-11-18",
-    "last_value": -5.74
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.85
   },
   "2382:52w_low": {
     "last_sent_date": "2026-11-24",
     "last_value": 252.0
   },
   "00878:daily_change_pct": {
-    "last_sent_date": "2026-11-24",
-    "last_value": -5.88
+    "last_sent_date": "2026-11-26",
+    "last_value": 9.84
   },
   "00919:daily_change_pct": {
-    "last_sent_date": "2026-11-24",
-    "last_value": -5.69
+    "last_sent_date": "2026-11-26",
+    "last_value": 8.78
   }
 }
