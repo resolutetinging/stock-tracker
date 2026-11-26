@@ -1,31 +1,31 @@
 {
   "2408:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.96
+    "last_sent_date": "2026-11-27",
+    "last_value": -9.87
   },
   "2344:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.95
+    "last_sent_date": "2026-11-27",
+    "last_value": -10.0
   },
   "00878:52w_high": {
     "last_sent_date": "2026-10-29",
     "last_value": 35.65
   },
   "2303:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.97
+    "last_sent_date": "2026-11-27",
+    "last_value": -9.99
   },
   "3017:daily_change_pct": {
     "last_sent_date": "2026-11-26",
     "last_value": 9.94
   },
   "3661:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.97
+    "last_sent_date": "2026-11-27",
+    "last_value": -7.92
   },
   "2454:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.91
+    "last_sent_date": "2026-11-27",
+    "last_value": -10.0
   },
   "2454:52w_high": {
     "last_sent_date": "2026-09-25",
@@ -48,20 +48,20 @@
     "last_value": 3685.0
   },
   "006208:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 10.0
+    "last_sent_date": "2026-11-27",
+    "last_value": -5.56
   },
   "2317:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.95
+    "last_sent_date": "2026-11-27",
+    "last_value": -8.83
   },
   "0050:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 10.0
+    "last_sent_date": "2026-11-27",
+    "last_value": -5.64
   },
   "2382:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.92
+    "last_sent_date": "2026-11-27",
+    "last_value": -7.61
   },
   "2330:daily_change_pct": {
     "last_sent_date": "2026-11-26",
@@ -72,11 +72,11 @@
     "last_value": 252.0
   },
   "00878:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 9.84
+    "last_sent_date": "2026-11-27",
+    "last_value": -7.17
   },
   "00919:daily_change_pct": {
-    "last_sent_date": "2026-11-26",
-    "last_value": 8.78
+    "last_sent_date": "2026-11-27",
+    "last_value": -5.53
   }
 }
